@@ -1,5 +1,11 @@
-function App() {
-  return <div className="App"></div>;
-}
+/* eslint-disable import/no-anonymous-default-export */
+import React from "react";
+import { ThemeProvider } from "styled-components";
+import GlobalStyles from "../Styles/GlobalStyles";
+import Theme from "../Styles/Theme";
 
-export default App;
+export default () => (
+  <ThemeProvider theme={Theme}>
+    <GlobalStyles />
+  </ThemeProvider>
+);

@@ -11,48 +11,67 @@ export default () => {
   const username = useInput("");
   const firstName = useInput("");
   const lastName = useInput("");
-  const email = useInput("fjdlaskfjlaskf@gmail.com");
+  const email = useInput("");
 
-  const [requestSecret] = useMutation(LOG_IN, {
-    update: (_, { data: { requestSecret } }) => {
-      if (!requestSecret) {
-        toast.error("You don't have Account. Create Now");
-        setTimeout(() => setAction("signUp"), 4000);
-      }
-    },
+  const [requestSecretMutation] = useMutation(LOG_IN, {
     variables: { email: email.value },
   });
 
-  const [createAccount] = useMutation(CREATE_ACCOUNT, {
-    update: (_, { data: { createAccount } }) => {
-      if (createAccount) {
-        toast.success("Welcome!");
-      }
-    },
+  const [createAccountMutation] = useMutation(CREATE_ACCOUNT, {
     variables: {
       username: username.value,
       email: email.value,
-      lastName: lastName.value,
       firstName: firstName.value,
+      lastName: lastName.value,
     },
   });
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     if (action === "logIn") {
       if (email.value !== "") {
-        requestSecret();
+        try {
+          const {
+            data: { requestSecret },
+          } = await requestSecretMutation();
+          if (!requestSecret) {
+            toast.error("You don't have Account. Create Now");
+            setTimeout(() => setAction("signUp"), 4000);
+          } else {
+            toast.success("Secret is sent!");
+          }
+        } catch {
+          toast.error("Error, Try again");
+        }
       } else {
         toast.error("Email is Empty");
       }
-    } else if (action === "SignUp") {
+    } else if (action === "signUp") {
       if (
         email.value !== "" &&
         username.value !== "" &&
         lastName.value !== "" &&
         firstName.value !== ""
       ) {
-        createAccount();
+        try {
+          const {
+            data: { createAccount },
+          } = await createAccountMutation();
+          if (!createAccount) {
+            console.log(createAccount);
+            toast.error("Error, Try again");
+          } else {
+            toast.success("Welcome! Secret is sent!");
+            await requestSecretMutation();
+            setTimeout(() => setAction("logIn"), 4000);
+          }
+        } catch (error) {
+          const errorMessage = error.message
+            .replace("GraphQL", "")
+            .replace("e", "E")
+            .replace(":", ",");
+          toast.error(errorMessage);
+        }
       } else {
         toast.error("All fields are required");
       }

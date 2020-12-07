@@ -11,6 +11,7 @@ export default () => {
   const username = useInput("");
   const firstName = useInput("");
   const lastName = useInput("");
+  const secret = useInput("");
   const email = useInput("");
 
   const [requestSecretMutation] = useMutation(LOG_IN, {
@@ -36,9 +37,9 @@ export default () => {
           } = await requestSecretMutation();
           if (!requestSecret) {
             toast.error("You don't have Account. Create Now");
-            setTimeout(() => setAction("signUp"), 4000);
+            setTimeout(() => setAction("signUp"), 3000);
           } else {
-            toast.success("Secret is sent!");
+            toast.success("Check your inbox secret is sent!");
           }
         } catch {
           toast.error("Error, Try again");
@@ -61,7 +62,7 @@ export default () => {
             console.log(createAccount);
             toast.error("Error, Try again");
           } else {
-            toast.success("Welcome! Secret is sent!");
+            toast.success("Welcome!, Check your inbox secret is sent!");
             await requestSecretMutation();
             setTimeout(() => setAction("logIn"), 4000);
           }
@@ -86,6 +87,7 @@ export default () => {
       firstName={firstName}
       lastName={lastName}
       email={email}
+      secret={secret}
       onSubmit={onSubmit}
     />
   );

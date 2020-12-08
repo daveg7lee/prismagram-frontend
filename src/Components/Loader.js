@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 import React from "react";
 import styled, { keyframes } from "styled-components";
 import { Logo } from "./Icons";

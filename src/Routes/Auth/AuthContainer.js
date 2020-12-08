@@ -3,7 +3,12 @@ import React, { useState } from "react";
 import AuthPresenter from "./AuthPresenter";
 import useInput from "../../Hooks/useInput";
 import { useMutation } from "react-apollo-hooks";
-import { CREATE_ACCOUNT, LOG_IN } from "./AuthQueries";
+import {
+  CONFIRM_SECRET,
+  CREATE_ACCOUNT,
+  LOCAL_LOG_IN,
+  LOG_IN,
+} from "./AuthQueries";
 import { toast } from "react-toastify";
 
 export default () => {
@@ -27,6 +32,15 @@ export default () => {
     },
   });
 
+  const [confirmSecretMutation] = useMutation(CONFIRM_SECRET, {
+    variables: {
+      secret: secret.value,
+      email: email.value,
+    },
+  });
+
+  const [localLogInMutation] = useMutation(LOCAL_LOG_IN);
+
   const onSubmit = async (e) => {
     e.preventDefault();
     if (action === "logIn") {
@@ -39,6 +53,7 @@ export default () => {
             toast.error("You don't have Account. Create Now");
             setTimeout(() => setAction("signUp"), 3000);
           } else {
+            setAction("confirm");
             toast.success("Check your inbox secret is sent!");
           }
         } catch {
@@ -59,7 +74,6 @@ export default () => {
             data: { createAccount },
           } = await createAccountMutation();
           if (!createAccount) {
-            console.log(createAccount);
             toast.error("Error, Try again");
           } else {
             toast.success("Welcome!, Check your inbox secret is sent!");
@@ -75,6 +89,21 @@ export default () => {
         }
       } else {
         toast.error("All fields are required");
+      }
+    } else if (action === "confirm") {
+      if (secret.value !== "") {
+        try {
+          const {
+            data: { confirmSecret: token },
+          } = await confirmSecretMutation();
+          if (token !== "" && token !== undefined) {
+            localLogInMutation({ variables: { token } });
+          } else {
+            throw Error();
+          }
+        } catch {
+          toast.error("Error, Can't confirm Secret, Check again");
+        }
       }
     }
   };

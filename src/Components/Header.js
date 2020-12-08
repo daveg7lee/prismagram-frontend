@@ -2,11 +2,11 @@
 import React from "react";
 import styled from "styled-components";
 import { Link, withRouter } from "react-router-dom";
-import { gql } from "apollo-boost";
 import Input from "./Input";
 import useInput from "../Hooks/useInput";
 import { Compass, HeartEmpty, User, Logo } from "./Icons";
 import { useQuery } from "react-apollo-hooks";
+import { ME } from "../SharedQueries";
 
 const Header = styled.header`
   width: 100%;
@@ -40,7 +40,8 @@ const HeaderColumn = styled.div`
   }
   &:last-child {
     margin-left: auto;
-    text-align: right;
+    display: flex;
+    justify-content: flex-end;
   }
 `;
 
@@ -58,18 +59,31 @@ const SearchInput = styled(Input)`
   }
 `;
 
+const LogoLink = styled(Link)`
+  display: flex;
+  align-items: center;
+`;
+
 const HeaderLink = styled(Link)`
   &:not(:last-child) {
     margin-right: 30px;
   }
 `;
 
-const ME = gql`
-  {
-    me {
-      username
-    }
-  }
+const Writing = styled.span`
+  font-size: 1.3rem;
+  color: ${(props) => props.theme.blackColor};
+  font-weight: 600;
+  height: 100%;
+  display: flex;
+  align-items: center;
+`;
+
+const Bar = styled.div`
+  width: 2px;
+  height: 23px;
+  margin: 0px 0.4rem;
+  background-color: ${(props) => props.theme.blackColor};
 `;
 
 export default withRouter(({ history }) => {
@@ -83,13 +97,19 @@ export default withRouter(({ history }) => {
     <Header>
       <HeaderWrapper>
         <HeaderColumn>
-          <Link to="/">
-            <Logo />
-          </Link>
+          <LogoLink to="/">
+            <Logo></Logo>
+            <Bar></Bar>
+            <Writing>Prismagram</Writing>
+          </LogoLink>
         </HeaderColumn>
         <HeaderColumn>
           <form onSubmit={onSearchSubmit}>
-            <SearchInput {...search} placeholder="Search" />
+            <SearchInput
+              value={search.value}
+              onChange={search.onChange}
+              placeholder="Search"
+            />
           </form>
         </HeaderColumn>
         <HeaderColumn>

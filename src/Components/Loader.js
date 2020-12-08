@@ -16,7 +16,7 @@ const Animation = keyframes`
 `;
 
 const Loader = styled.div`
-  animation: ${Animation} 1s linear infinite;
+  animation: ${Animation} 1.5s linear infinite;
 `;
 
 export default () => (

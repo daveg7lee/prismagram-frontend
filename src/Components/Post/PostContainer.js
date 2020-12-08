@@ -20,6 +20,7 @@ const PostContainer = ({
   const [isLikedS, setIsLiked] = useState(isLiked);
   const [likeCountS, setLikeCount] = useState(likeCount);
   const [currentItem, setCurrentItem] = useState(0);
+  const [selfComments, setSelfComments] = useState([]);
   const comment = useInput("");
   const [toggleLikeMutation] = useMutation(TOGGLE_LIKE, {
     variables: { postId: id },
@@ -40,7 +41,6 @@ const PostContainer = ({
   }, [currentItem]);
   const toggleLike = async () => {
     try {
-      toggleLikeMutation();
       if (isLikedS === true) {
         setIsLiked(false);
         setLikeCount(likeCountS - 1);
@@ -48,10 +48,26 @@ const PostContainer = ({
         setIsLiked(true);
         setLikeCount(likeCountS + 1);
       }
+      await toggleLikeMutation();
     } catch {
-      console.log(isLikedS);
       setIsLiked(isLikedS);
       toast.error("Can't register like");
+    }
+  };
+
+  const onKeyDown = async (event) => {
+    const { keyCode } = event;
+    if (keyCode === 13) {
+      event.preventDefault();
+      try {
+        const {
+          data: { addComment },
+        } = await addCommentMutation();
+        setSelfComments([...selfComments, addComment]);
+        comment.setValue("");
+      } catch {
+        toast.error("Cant send comment");
+      }
     }
   };
 
@@ -70,6 +86,8 @@ const PostContainer = ({
       setLikeCount={setLikeCount}
       currentItem={currentItem}
       toggleLike={toggleLike}
+      onKeyDown={onKeyDown}
+      selfComments={selfComments}
     />
   );
 };

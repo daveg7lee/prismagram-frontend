@@ -11,6 +11,7 @@ const Post = styled.div`
   width: 100%;
   max-width: 600px;
   margin-bottom: 25px;
+  user-select: none;
 `;
 
 const Header = styled.header`
@@ -83,7 +84,9 @@ const Textarea = styled(TextareaAutosize)`
   border: none;
   width: 100%;
   resize: none;
-  font-size: 14px;
+  font-size: 1em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   &:focus {
     outline: none;
   }
@@ -98,6 +101,7 @@ export default ({
   createdAt,
   newComment,
   currentItem,
+  toggleLike,
 }) => (
   <Post>
     <Header>
@@ -115,12 +119,16 @@ export default ({
     </Files>
     <Meta>
       <Buttons>
-        <Button>{isLiked ? <HeartFull /> : <HeartEmpty />}</Button>
+        <Button onClick={toggleLike}>
+          {isLiked ? <HeartFull /> : <HeartEmpty />}
+        </Button>
         <Button>
           <Comment />
         </Button>
       </Buttons>
-      <FatText text={likeCount === 1 ? "1 like" : `${likeCount} likes`} />
+      <FatText
+        text={likeCount <= 1 ? `${likeCount} like` : `${likeCount} likes`}
+      />
       <Timestamp>{createdAt}</Timestamp>
       <Textarea placeholder={"Add a comment..."} {...newComment} />
     </Meta>

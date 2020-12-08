@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import useInput from "../../Hooks/useInput";
 import PostPresenter from "./PostPresenter";
+import { ADD_COMMENT, TOGGLE_LIKE } from "./PostQueries";
+import { useMutation } from "react-apollo-hooks";
+import { toast } from "react-toastify";
 
 const PostContainer = ({
   id,
@@ -18,17 +21,40 @@ const PostContainer = ({
   const [likeCountS, setLikeCount] = useState(likeCount);
   const [currentItem, setCurrentItem] = useState(0);
   const comment = useInput("");
+  const [toggleLikeMutation] = useMutation(TOGGLE_LIKE, {
+    variables: { postId: id },
+  });
+  const [addCommentMutation] = useMutation(ADD_COMMENT, {
+    variables: { text: comment.value, postId: id },
+  });
   const slide = () => {
     const totalFiles = files.length;
     if (currentItem === totalFiles - 1) {
-      setTimeout(() => setCurrentItem(0), 3000);
+      setTimeout(() => setCurrentItem(0), 4000);
     } else {
-      setTimeout(() => setCurrentItem(currentItem + 1), 3000);
+      setTimeout(() => setCurrentItem(currentItem + 1), 4000);
     }
   };
   useEffect(() => {
     slide();
   }, [currentItem]);
+  const toggleLike = async () => {
+    try {
+      toggleLikeMutation();
+      if (isLikedS === true) {
+        setIsLiked(false);
+        setLikeCount(likeCountS - 1);
+      } else if (isLikedS === false) {
+        setIsLiked(true);
+        setLikeCount(likeCountS + 1);
+      }
+    } catch {
+      console.log(isLikedS);
+      setIsLiked(isLikedS);
+      toast.error("Can't register like");
+    }
+  };
+
   return (
     <PostPresenter
       user={user}
@@ -43,6 +69,7 @@ const PostContainer = ({
       setIsLiked={setIsLiked}
       setLikeCount={setLikeCount}
       currentItem={currentItem}
+      toggleLike={toggleLike}
     />
   );
 };

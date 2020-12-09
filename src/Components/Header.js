@@ -71,18 +71,19 @@ const HeaderLink = styled(Link)`
 `;
 
 const Writing = styled.span`
-  font-size: 1.3rem;
+  font-family: "Cookie", cursive;
+  font-size: 1.9rem;
   color: ${(props) => props.theme.blackColor};
-  font-weight: 600;
+  font-weight: 500;
   height: 100%;
   display: flex;
   align-items: center;
 `;
 
 const Bar = styled.div`
-  width: 2px;
-  height: 23px;
-  margin: 0px 0.4rem;
+  width: 1px;
+  height: 25px;
+  margin: 0px 1rem;
   background-color: ${(props) => props.theme.blackColor};
 `;
 

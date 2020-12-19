@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import useInput from "../../Hooks/useInput";
@@ -38,7 +39,7 @@ const PostContainer = ({
   };
   useEffect(() => {
     slide();
-  }, [currentItem]);
+  }, [currentItem, slide]);
   const toggleLike = async () => {
     try {
       if (isLikedS === true) {
